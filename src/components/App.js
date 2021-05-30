@@ -127,16 +127,15 @@ function handleAddPlaceSubmit(props) {
 
 const [loggedIn, setLoggedIn] = useState(false);
 const [userData, setUserData] = useState('');
-const jwt = localStorage.getItem('jwt');
 const history = useHistory();
 
 useEffect(() =>{
   checkToken();
-}, [jwt]);
+}, [loggedIn]);
 
 useEffect(() =>{
   if (loggedIn) {
-    <Redirect to="/" />
+    <Redirect to="/" />;
   }
 }, [loggedIn]);
 
@@ -159,6 +158,7 @@ function handleRegister({password, email}) {
 function handleLogin({password, email}) {
   mestoAuth.authorize(password, email)
   .then(data => {
+    setLoggedIn(true);
     localStorage.setItem('jwt', data.token);
     history.push('/');
   })
@@ -202,6 +202,7 @@ function handleLinkClick() {
   }
 }
 
+console.log(loggedIn);
   return (
 
     <CurrentUserContext.Provider value={currentUser}>      
@@ -219,7 +220,7 @@ function handleLinkClick() {
               </Route>
               <ProtectedRoute path="/" component={Main} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardDelete={handleDeleteCard} cards={cards} onCardLike={handleCardLike} loggedIn={loggedIn} />
               <Route>
-                  {loggedIn ? <Redirect to="./" /> : <Redirect to="/sign-in" />}
+                  {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
               </Route>
             </Switch>
             
