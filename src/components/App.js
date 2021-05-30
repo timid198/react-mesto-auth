@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { Route, Switch, Redirect, withRouter, useHistory } from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -10,6 +11,11 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import CardDeletePopup from './CardDeletePopup';
 import Spinner from './Spinner/Spinner';
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
+import * as mestoAuth from './mestoAuth';
 
 function App() {
 
@@ -47,8 +53,9 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
-    setCardToDelete({})
+    setCardToDelete({});
     setSelectedCard({});
+    setIsInfoToolTip(false);
   }
 
   const [currentUser, setCurrentUser] = useState( {name: '', about: '', avatar: '', _id: ''} );
@@ -116,31 +123,114 @@ function handleAddPlaceSubmit(props) {
   .finally(() => {setLoading(false)});
 }
 
+// 12 спринт
+
+const [loggedIn, setLoggedIn] = useState(false);
+const [userData, setUserData] = useState('');
+const jwt = localStorage.getItem('jwt');
+const history = useHistory();
+
+useEffect(() =>{
+  checkToken();
+}, [jwt]);
+
+useEffect(() =>{
+  if (loggedIn) {
+    <Redirect to="/" />
+  }
+}, [loggedIn]);
+
+const [isInfoTooltip, setIsInfoToolTip] = useState(false);
+const [contentInfotooltip, setContentInfoTooltip] = useState(false);
+
+function handleRegister({password, email}) {
+  mestoAuth.register(password, email)
+  .then(data => {
+    setIsInfoToolTip(true);
+    setContentInfoTooltip(true);
+  })
+  .catch(err => {
+    console.error(err);
+    setIsInfoToolTip(true);
+    setContentInfoTooltip(false);
+  })
+}
+
+function handleLogin({password, email}) {
+  mestoAuth.authorize(password, email)
+  .then(data => {
+    localStorage.setItem('jwt', data.token);
+    history.push('/');
+  })
+  .catch(err => {
+    console.error(err);
+    setUserData('');
+    setIsInfoToolTip(true);
+    setContentInfoTooltip(false);
+  })
+}
+
+function checkToken() {
+  const jwt = localStorage.getItem('jwt');
+  if (jwt) {
+  mestoAuth.getContent(jwt)
+  .then(data => {
+    setUserData(data.data.email);
+    setLoggedIn(true);
+  })
+  .catch(err => console.error(err))
+  }
+}
+
+function handleLogout() {
+  setUserData('');
+  setLoggedIn(false);
+  localStorage.removeItem('jwt');
+  history.push('/sign-in');
+}
+
+const [headerLink, setHeaderLink] = useState('/sign-up');
+const [isHeaderLinkText, setIsHeaderLinkText] = useState('Регистрация');
+
+function handleLinkClick() {
+  if (headerLink === '/sign-up') {
+  setHeaderLink('/sign-in');
+  setIsHeaderLinkText('Войти');
+  } else {
+    setHeaderLink('/sign-up');
+  setIsHeaderLinkText('Регистрация');
+  }
+}
+
   return (
 
     <CurrentUserContext.Provider value={currentUser}>      
         <div className="App">
           <div className="page">
           
-            <Header />
+            <Header loggedIn={loggedIn} handleLogout={handleLogout} mail={userData} handleLinkClick={handleLinkClick} headerLink={headerLink} headerLinkText={isHeaderLinkText} />
             { isLoading ? <Spinner /> : '' }
-            <Main 
-            onEditProfile={handleEditProfileClick} 
-            onAddPlace={handleAddPlaceClick} 
-            onEditAvatar={handleEditAvatarClick} 
-            onCardClick={handleCardClick} 
-            onCardDelete={handleDeleteCard}
-            cards={cards} 
-            onCardLike={handleCardLike}            
-             />
+            <Switch >
+              <Route path="/sign-up">
+                <Register handleRegister={handleRegister} />
+              </Route>
+              <Route path="/sign-in">
+                <Login handleLogin={handleLogin} />
+              </Route>
+              <ProtectedRoute path="/" component={Main} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardDelete={handleDeleteCard} cards={cards} onCardLike={handleCardLike} loggedIn={loggedIn} />
+              <Route>
+                  {loggedIn ? <Redirect to="./" /> : <Redirect to="/sign-in" />}
+              </Route>
+            </Switch>
+            
             <Footer />
+
+            <InfoTooltip isOpen={isInfoTooltip} content={contentInfotooltip} onClose={closeAllPopups} />
             
             <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
             <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} /> 
             <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} /> 
-            <CardDeletePopup card={cardToDelete} onClose={closeAllPopups} onCardDelete={handleCardDelete} />           
-
-            
+            <CardDeletePopup card={cardToDelete} onClose={closeAllPopups} onCardDelete={handleCardDelete} />
 
             <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
@@ -150,4 +240,4 @@ function handleAddPlaceSubmit(props) {
   );
 }
 
-export default App;
+export default withRouter(App);

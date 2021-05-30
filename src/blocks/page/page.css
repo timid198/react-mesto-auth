@@ -3,7 +3,7 @@
     min-width: 320px;
     background-color: #000000;
     display: grid;
-    align-items: start;
+    align-items: center;
     justify-content: center;
     align-content: start;
     grid-template-columns: repeat(1, 1fr);
@@ -23,7 +23,7 @@
 
 @media screen and (min-width: 1281px) {
     .page {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr 880px 1fr;
         grid-template-rows: repeat(3, max-content);
         grid-template-areas:
         ". header ."
