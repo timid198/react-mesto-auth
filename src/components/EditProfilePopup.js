@@ -2,7 +2,7 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
+function EditProfilePopup({isOpen, onClose, onUpdateUser, closeOverlay}) {
 
 const [name, setName] = React.useState('');
 const [description, setDescription] = React.useState('');
@@ -32,7 +32,7 @@ React.useEffect(() => {
 
 
     return (
-        <PopupWithForm name="edit" title="Редактировать профиль" buttonText="Сохранить" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} >
+        <PopupWithForm name="edit" title="Редактировать профиль" buttonText="Сохранить" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} closeOverlay={closeOverlay} >
               <section className="popup__section">
                 <input type="text" value={name} onChange={handleChangeName} name="name" className="popup__input popup__input_name" placeholder="Имя" minLength="2" maxLength="40" required />
                 <span className="popup__error popup__error_name" id="name-error"> </span>

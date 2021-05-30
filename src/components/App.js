@@ -202,7 +202,24 @@ function handleLinkClick() {
   }
 }
 
-console.log(loggedIn);
+function closeOverlay(evt){
+  if(evt.target === evt.currentTarget){
+    closeAllPopups()
+  }
+}
+
+useEffect(() => {
+  const handleEsc = (event) => {
+      if (event.keyCode === 27) 
+      closeAllPopups();
+  };
+  window.addEventListener('keydown', handleEsc);
+
+  return () => {
+      window.removeEventListener('keydown', handleEsc);
+  };
+}, []);
+
   return (
 
     <CurrentUserContext.Provider value={currentUser}>      
@@ -226,14 +243,14 @@ console.log(loggedIn);
             
             <Footer />
 
-            <InfoTooltip isOpen={isInfoTooltip} content={contentInfotooltip} onClose={closeAllPopups} />
+            <InfoTooltip isOpen={isInfoTooltip} content={contentInfotooltip} onClose={closeAllPopups} closeOverlay={closeOverlay} />
             
-            <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-            <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} /> 
-            <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} /> 
-            <CardDeletePopup card={cardToDelete} onClose={closeAllPopups} onCardDelete={handleCardDelete} />
+            <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} closeOverlay={closeOverlay} />
+            <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} closeOverlay={closeOverlay} /> 
+            <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} closeOverlay={closeOverlay} /> 
+            <CardDeletePopup card={cardToDelete} onClose={closeAllPopups} onCardDelete={handleCardDelete} closeOverlay={closeOverlay} />
 
-            <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+            <ImagePopup card={selectedCard} onClose={closeAllPopups} closeOverlay={closeOverlay} />
 
           </div>
         </div>      
@@ -241,4 +258,4 @@ console.log(loggedIn);
   );
 }
 
-export default withRouter(App);
+export default App;

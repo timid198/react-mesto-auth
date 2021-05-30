@@ -1,6 +1,6 @@
 import React from 'react';
 
-function CardDeletePopup({card, onClose, onCardDelete}) {
+function CardDeletePopup({card, onClose, onCardDelete, closeOverlay}) {
 
     function handleSubmit(e) {
         e.preventDefault();      
@@ -12,7 +12,7 @@ function CardDeletePopup({card, onClose, onCardDelete}) {
     let className = `popup popup-delete ${card._id ? 'popup_opened' : ''}`;
 
     return(
-        <div className={className}>
+        <div className={className} onClick={closeOverlay}>
             <div className="popup__window popup-delete__window">
                 <button type="reset" className="popup__close popup-delete__close" onClick={onClose}></button>
                 <h2 className="popup__title popup-delete__title">Вы уверены?</h2>

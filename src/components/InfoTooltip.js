@@ -1,13 +1,13 @@
 import React from 'react';
 
-function InfoTooltip({ isOpen, content, onClose }) {
+function InfoTooltip({ isOpen, content, onClose, closeOverlay }) {
 
     let className = `popup ${isOpen ? 'popup_opened' : ''}`;
     let imageSrc = `${content ? 'popup-infotooltip__image-sucсess' : 'popup-infotooltip__image-failed'}`
     let title = `${content ? 'Вы успешно зарегистрировались!' : 'Что-то пошло не так! Попробуйте ещё раз.'}`
 
     return(
-        <div className={className}>
+        <div className={className} onClick={closeOverlay}>
             <div className="popup__window popup-infotooltip">
                 <button type="reset" className="popup__close popup-infotooltip__close" onClick={onClose} />
                 <div className={imageSrc} />

@@ -1,11 +1,11 @@
 import React from 'react';
 
-function PopupWithForm({ name, title, buttonText, isOpen, onClose, onSubmit, children }) {
+function PopupWithForm({ name, title, buttonText, isOpen, onClose, onSubmit, children, closeOverlay }) {
 
   let className = `popup popup-${name} ${isOpen ? 'popup_opened' : ''}`;
 
   return (
-    <div className={className}>
+    <div className={className} onClick={closeOverlay}>
       <div className={`popup__window popup-${name}__window`}>
         <button type="reset" className={`popup__close popup-${name}__close`} onClick={onClose}></button>
         <h2 className={`popup__title popup-${name}__title`}>{title}</h2>
