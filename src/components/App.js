@@ -212,7 +212,7 @@ function handleLinkClick() {
             { isLoading ? <Spinner /> : '' }
             <Switch >
               <Route path="/sign-up">
-                <Register handleRegister={handleRegister} />
+                <Register handleRegister={handleRegister} clear={isInfoTooltip} />
               </Route>
               <Route path="/sign-in">
                 <Login handleLogin={handleLogin} />

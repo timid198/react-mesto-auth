@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Register({handleRegister}) {
+function Register({handleRegister, clear}) {
 
     const [data, setData] = useState({
         password: '',
         email: '',
     })
+
+    React.useEffect(() => {
+        setData({password: '', email: ''})
+      }, [clear]); 
 
     function handleChange(e) {
         const {name, value} = e.target;
