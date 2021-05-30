@@ -1,14 +1,14 @@
-Фронтенд проекта Mesto на React.
+Проект Mesto на Реакте с авторизацией и регистрацией.
 
 Стэк: БЭМ; HTML и Java Script, Create React App.
 
 Функциональность: flex; grid; Webpack; Nested структура БЭМ.
 
-Описание: интерактивная страница, куда можно добавлять фотографии, удалять их и ставить лайки.
+Описание: интерактивная страница, куда можно добавлять фотографии, удалять их и ставить лайки. Реализована регистрация пользователя.
 
-Ссылка на проект: https://timid198.github.io/mesto-react/
+Ссылка на проект: https://timid198.github.io/react-mesto-auth/
 
-Ссылка на репозиторий: https://github.com/timid198/mesto-react.git
+Ссылка на репозиторий: https://github.com/timid198/react-mesto-auth.git
 
 # Getting Started with Create React App
 
