@@ -1,7 +1,6 @@
 .page {
     position: relative;
     min-width: 320px;
-    background-color: #000000;
     display: grid;
     align-items: center;
     justify-content: center;
@@ -30,4 +29,8 @@
         ". main ."
         ". footer .";
     }
+}
+
+body {
+    background-color: #000000;
 }
