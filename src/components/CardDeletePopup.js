@@ -1,26 +1,17 @@
 import React from 'react';
+import PopupWithForm from './PopupWithForm';
 
-function CardDeletePopup({card, onClose, onCardDelete, closeOverlay}) {
+function CardDeletePopup({isOpen, onClose, onCardDelete, closeOverlay}) {
 
     function handleSubmit(e) {
         e.preventDefault();      
         onCardDelete({
-          _id: card._id,
+          _id: isOpen,
         });
     } 
 
-    let className = `popup popup-delete ${card._id ? 'popup_opened' : ''}`;
-
     return(
-        <div className={className} onClick={closeOverlay}>
-            <div className="popup__window popup-delete__window">
-                <button type="reset" className="popup__close popup-delete__close" onClick={onClose}></button>
-                <h2 className="popup__title popup-delete__title">Вы уверены?</h2>
-                <form className="popup__form popup-delete__form" onSubmit={handleSubmit} noValidate>
-                    <button type="submit" autoFocus className="popup__button popup-delete__button">Да</button>
-                </form>
-            </div>
-        </div>
+        <PopupWithForm name="delete" title="Вы уверены?" buttonText="Да" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} closeOverlay={closeOverlay} />
     )
 }
 

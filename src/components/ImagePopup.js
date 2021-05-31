@@ -2,8 +2,7 @@ import React from 'react';
 
 function ImagePopup({ card, onClose, closeOverlay }) {
 
-  let className = `popup ${card.link ? 'popup_opened' : ''}`;
-
+  const className = `popup ${card.link ? 'popup_opened' : ''}`;
   
   return (
     <div className={className}  onClick={closeOverlay}>

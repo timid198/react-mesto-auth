@@ -15,7 +15,7 @@ import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
-import * as mestoAuth from './mestoAuth';
+import * as mestoAuth from '../utils/mestoAuth';
 
 function App() {
 
@@ -66,7 +66,7 @@ function App() {
     setLoading(true)
     Promise.all([api.getUserData(), api.getCards()])
       .then(res => {
-        let [userData, cardsData] = res;
+        const [userData, cardsData] = res;
         setCurrentUser(userData);
         setCards(cardsData);}) 
       .catch((err) => console.log(err))
@@ -126,7 +126,7 @@ function handleAddPlaceSubmit(props) {
 // 12 спринт
 
 const [loggedIn, setLoggedIn] = useState(false);
-const [userData, setUserData] = useState('');
+const [userEmail, setUserEmail] = useState('');
 const history = useHistory();
 
 useEffect(() =>{
@@ -158,13 +158,15 @@ function handleRegister({password, email}) {
 function handleLogin({password, email}) {
   mestoAuth.authorize(password, email)
   .then(data => {
-    setLoggedIn(true);
-    localStorage.setItem('jwt', data.token);
-    history.push('/');
+    if (data.token) {
+      setLoggedIn(true);
+      localStorage.setItem('jwt', data.token);
+      history.push('/');
+    }
   })
   .catch(err => {
     console.error(err);
-    setUserData('');
+    setUserEmail('');
     setIsInfoToolTip(true);
     setContentInfoTooltip(false);
   })
@@ -175,15 +177,17 @@ function checkToken() {
   if (jwt) {
   mestoAuth.getContent(jwt)
   .then(data => {
-    setUserData(data.data.email);
-    setLoggedIn(true);
+    if (data.data.email) {
+      setUserEmail(data.data.email);
+      setLoggedIn(true);
+    }
   })
   .catch(err => console.error(err))
   }
 }
 
 function handleLogout() {
-  setUserData('');
+  setUserEmail('');
   setLoggedIn(false);
   localStorage.removeItem('jwt');
   history.push('/sign-in');
@@ -194,11 +198,11 @@ const [isHeaderLinkText, setIsHeaderLinkText] = useState('Регистрация
 
 function handleLinkClick() {
   if (headerLink === '/sign-up') {
-  setHeaderLink('/sign-in');
-  setIsHeaderLinkText('Войти');
+    setHeaderLink('/sign-in');
+    setIsHeaderLinkText('Войти');
   } else {
     setHeaderLink('/sign-up');
-  setIsHeaderLinkText('Регистрация');
+    setIsHeaderLinkText('Регистрация');
   }
 }
 
@@ -210,7 +214,7 @@ function closeOverlay(evt){
 
 useEffect(() => {
   const handleEsc = (event) => {
-      if (event.keyCode === 27) 
+      if (event.key === 'Escape') 
       closeAllPopups();
   };
   window.addEventListener('keydown', handleEsc);
@@ -226,7 +230,7 @@ useEffect(() => {
         <div className="App">
           <div className="page">
           
-            <Header loggedIn={loggedIn} handleLogout={handleLogout} mail={userData} handleLinkClick={handleLinkClick} headerLink={headerLink} headerLinkText={isHeaderLinkText} />
+            <Header loggedIn={loggedIn} handleLogout={handleLogout} mail={userEmail} handleLinkClick={handleLinkClick} headerLink={headerLink} headerLinkText={isHeaderLinkText} />
             { isLoading ? <Spinner /> : '' }
             <Switch >
               <Route path="/sign-up">
@@ -235,7 +239,7 @@ useEffect(() => {
               <Route path="/sign-in">
                 <Login handleLogin={handleLogin} />
               </Route>
-              <ProtectedRoute path="/" component={Main} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardDelete={handleDeleteCard} cards={cards} onCardLike={handleCardLike} loggedIn={loggedIn} />
+              <ProtectedRoute exact path="/" component={Main} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardDelete={handleDeleteCard} cards={cards} onCardLike={handleCardLike} loggedIn={loggedIn} />
               <Route>
                   {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
               </Route>
@@ -248,7 +252,7 @@ useEffect(() => {
             <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} closeOverlay={closeOverlay} />
             <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} closeOverlay={closeOverlay} /> 
             <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} closeOverlay={closeOverlay} /> 
-            <CardDeletePopup card={cardToDelete} onClose={closeAllPopups} onCardDelete={handleCardDelete} closeOverlay={closeOverlay} />
+            <CardDeletePopup isOpen={cardToDelete._id} onClose={closeAllPopups} onCardDelete={handleCardDelete} closeOverlay={closeOverlay} />
 
             <ImagePopup card={selectedCard} onClose={closeAllPopups} closeOverlay={closeOverlay} />
 

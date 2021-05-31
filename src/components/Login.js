@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AuthForm from './AuthForm';
 
 function Login({handleLogin}) {
 
@@ -17,19 +18,14 @@ function Login({handleLogin}) {
         if (!data.password || !data.email) {
             return
         }
-        let { password, email } = data;
+        const { password, email } = data;
         handleLogin({password, email});
     }
     return(
         <div className="login">
             <h2 className="login__title">Вход</h2>
             <form onSubmit={handleSubmit} className="login__form">
-                <fieldset className="login__fieldset">
-                    <input value={data.email} onChange={handleChange} type="email" name="email" className="login__input login__input_email" placeholder="Email" minLength="2" maxLength="40" required />
-                    <span className="login__error login__error_email" id="email-error"> </span>
-                    <input value={data.password} onChange={handleChange} type="password" name="password" className="login__input login__input_password" placeholder="Пароль" minLength="2" maxLength="40" required />
-                    <span className="login__error login__error_password" id="password-error"> </span>
-                </fieldset>
+                <AuthForm data={data} handleChange={handleChange} />
                 <button type="submit" className="login__button">Войти</button>
             </form>
         </div>
