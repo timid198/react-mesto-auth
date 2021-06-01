@@ -180,6 +180,7 @@ function checkToken() {
     if (data.data.email) {
       setUserEmail(data.data.email);
       setLoggedIn(true);
+      history.push('/');
     }
   })
   .catch(err => console.error(err))
